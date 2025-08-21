@@ -1,16 +1,14 @@
 package com.uade.tpo.demo.entity.dto;
 
 import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.Discount;
 import com.uade.tpo.demo.entity.User;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
 public class ProductRequest {
+    //sin el ID porque esto no se debe poner en la base de datos
     private Long id;
     private String name;
     private String description;
