@@ -12,6 +12,11 @@ import jakarta.persistence.OneToOne;
 
 @Entity
 public class Role {
+    public Role() {
+    }
+    public Role(String description) {
+        this.description = description;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

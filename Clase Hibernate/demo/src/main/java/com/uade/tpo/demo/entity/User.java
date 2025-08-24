@@ -16,6 +16,13 @@ import lombok.Data;
 @Entity
 @Data
 public class User {
+    public User() {
+    }
+    public User(String email, String name, String surname) {
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

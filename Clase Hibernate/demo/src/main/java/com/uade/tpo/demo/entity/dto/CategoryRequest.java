@@ -6,4 +6,11 @@ import lombok.Data;
 public class CategoryRequest {
     private int id;
     private String description;
+
+    public int getId() {
+        return id;
+    }
+    public String getDescription() {
+        return description;
+    }
 }
