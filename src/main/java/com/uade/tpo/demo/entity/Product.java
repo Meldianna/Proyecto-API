@@ -12,24 +12,26 @@ import lombok.Data;
 
 @Data
 @Entity
+//@Table(name="product")
 public class Product {
     
     public Product(){}
 
-    public Product(String name, String description, double price, int stock, Category cat){
+    public Product(String name, String description, double price, int stock, Category cat, User owner){
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.category = cat;
         this.discount = null; //inicializa en null
+        this.owner = owner;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(unique=true) //nombre único
     private String name;
 
     @Column
@@ -41,15 +43,17 @@ public class Product {
     @Column
     private int stock;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
     //OneToOne with Discount
-    @Column
+
+    @OneToOne
+    @JoinColumn(name="discount_id", referencedColumnName="id")
     private Discount discount;
 
-    @Column
+ 
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName="id")
     private User owner;

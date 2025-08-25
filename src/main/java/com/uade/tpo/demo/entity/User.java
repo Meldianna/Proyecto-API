@@ -10,9 +10,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 public class User {
+
+    public User(String nombre, String email){
+        this.nombre = nombre;
+        this.email = email;
+        this.role = null;
+        this.orders = null;
+        this.products = null;
+    }
+
     @Id //se define que el atributo es la PK
     @GeneratedValue(strategy = GenerationType.IDENTITY) //cuando se transforme a un modelo de datos relacional, se utiliza la estrategia para definir el valor como "autogenerado"
     private Long id;
@@ -32,7 +43,10 @@ public class User {
    
     @ManyToOne
     @JoinColumn(name="role_id")
-    private Role role_id; //FK
+    private Role role; //FK
+
+    @OneToMany(mappedBy="owner")
+    private List<Product> products;
 
 
 }

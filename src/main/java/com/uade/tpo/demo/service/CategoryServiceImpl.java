@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.demo.entity.Category;
@@ -16,8 +18,8 @@ public class CategoryServiceImpl implements CategoryService{
     private CategoryRepository categoryRepository;
 
 
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+   public Page<Category> getCategories(PageRequest pageable) {
+        return categoryRepository.findAll(pageable);
     }
 
     public Optional<Category> getCategoryById(Long categoryId) {
@@ -28,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService{
         List<Category> categories = categoryRepository.findByDescription(description); //retorna una lista. Se comprueba si existe la categoría verificando si la lista tiene elementos
         if (categories.isEmpty()) //si está vacía, no hay elementos
         return categoryRepository.save(new Category(description));
-        throw new CategoryDuplicateException();
+    throw new CategoryDuplicateException();
    }
     
 }

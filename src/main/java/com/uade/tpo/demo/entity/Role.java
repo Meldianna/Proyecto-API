@@ -21,7 +21,7 @@ public class Role {
    /* @ManyToMany(mappedBy = "roles")
     private List<User> users;*/
 
-    @OneToMany(mappedBy= "role_id")
+    @OneToMany(mappedBy= "role")
     private List<User> users; //FK de users, donde cada rol puede tener muchos usuarios asociados
 
 }
