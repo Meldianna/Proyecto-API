@@ -107,7 +107,7 @@ public class BillController {
     @PostMapping
     public ResponseEntity<Object> createBill(@RequestBody BillRequest billRequest)
             throws BillDuplicateException{
-        Bill result = billService.createBill(billRequest.getIdOrden(), billRequest.getIdUser(), billRequest.getPrecioTotal(), billRequest.getFecha());
+        Bill result = billService.createBill(billRequest.getIdOrden(),  billRequest.getPrecioTotal(), billRequest.getFecha());
         return ResponseEntity.created(URI.create("bills/" + result.getId())).body(result);
         
     }

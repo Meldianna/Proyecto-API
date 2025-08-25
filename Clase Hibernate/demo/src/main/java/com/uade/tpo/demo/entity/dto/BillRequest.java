@@ -12,15 +12,12 @@ public class BillRequest {
 
     private Long id;
     private Order idOrden;
-    private User idUser;
+
     private double  precioTotal;
     private LocalDate fecha;
 
     public Order getIdOrden() {
         return idOrden;
-    }
-    public User getIdUser() {
-        return idUser;
     }
     public double getPrecioTotal() {
         return precioTotal;

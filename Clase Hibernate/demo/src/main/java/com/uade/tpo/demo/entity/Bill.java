@@ -8,8 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 //import lombok.Data;
 // ⠁⠁⠁⠁⠁⠁⠐⢶⣶⣶⣶⣤⣤⡀⠁⠁⣠⣀⣀⠁⠁⠁⠁⠁⠁⠁⠁⠁⠁⠁
 // ⠁⠁⠁⠁⠁⠁⠁⠁⠙⢿⣯⣠⣶⣦⣤⣤⣌⣛⠻⢇⣠⣤⣤⠁⠁⠁⠁⠁⠁⠁
@@ -24,6 +26,7 @@ import jakarta.persistence.OneToOne;
 // ⠁⠁⠁⠉⠻⢿⣿⣿⣷⣦⣬⣍⣓⡒⠒⣒⣂⣠⡬⠽⠓⠂⠁⠁⠁⠁⠁⠁
 @Entity
 //@Data
+@Table(name = "bills")
 public class Bill { //representa entidad en la base de datos
 
     @Id
@@ -31,33 +34,32 @@ public class Bill { //representa entidad en la base de datos
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JoinColumn(name = "id_order", unique= true, referencedColumnName = "id")
     private Order idOrder;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User idUser;
 
     @Column(name = "precio_total")
     private double  precioTotal;
 
-    @Column(name = "fecha")
-    private LocalDate fecha;
+    @Column(name = "date")
+    private LocalDate date;
 
 
 
     public Bill() {
     }
-    public Bill(Order idOrder, User idUser, double precioTotal, LocalDate fecha) {
+    public Bill(Order idOrder, double precioTotal, LocalDate date) {
         this.idOrder = idOrder;
-        this.idUser = idUser;
         this.precioTotal = precioTotal;
-        this.fecha = fecha;
+        this.date = date;
     }
 
     // Getters and Setters
     public Long getId() {
         return id;
     }
-    
+
+    @Transient
+    public User getUserId(){
+        return idOrder.getUser();
+    }
 }

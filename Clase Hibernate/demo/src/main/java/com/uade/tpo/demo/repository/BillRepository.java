@@ -19,10 +19,10 @@ import com.uade.tpo.demo.entity.User;
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Long> {
     
-    @Query(value = "select b from Bill b where b.idUser = :userId")
-    Page<Bill> findByUserId(@Param("userId") User userId, Pageable pageable);
+    @Query(value = "select b from Bill b where b.idOrder.user = :user")
+    Page<Bill> findByUserId(@Param("user") User user, Pageable pageable);
 
-    @Query(value = "select b from Bill b where b.idOrden =:idOrden")
+    @Query(value = "select b from Bill b where b.idOrder =:idOrder")
     Optional<Bill> findByOrderId(Order idOrder);
 
     @Query(value = "select b from Bill b where b.date = :date")

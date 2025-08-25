@@ -34,11 +34,11 @@ public class BillServiceImpl implements BillService {
 	}
 	@Override
 	public Page<Bill> getBillsByUserId(User userId, Pageable pageable) throws NoBillWithUserId {
-		List<Bill> existingBills = billRepository.findByUserId(userId, pageable).getContent();
+		Page<Bill> existingBills = billRepository.findByUserId(userId, pageable);
 		if (existingBills.isEmpty()){
 			throw new NoBillWithUserId();
 		}
-		return billRepository.findByUserId(userId, pageable);
+		return existingBills;
 	}
 
 	@Override
@@ -60,12 +60,12 @@ public class BillServiceImpl implements BillService {
 
 
 	@Override
-	public Bill createBill(Order orderId, User userId, Double precioTotal, LocalDate fecha) throws BillDuplicateException {
+	public Bill createBill(Order orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException {
 		Optional<Bill> existingBill = billRepository.findByOrderId(orderId);
 		if (existingBill.isPresent()){
 			throw new BillDuplicateException();
 		}else{
-			return billRepository.save(new Bill(orderId, userId, precioTotal, fecha));
+			return billRepository.save(new Bill(orderId, precioTotal, fecha));
 		}
 	}
 }
