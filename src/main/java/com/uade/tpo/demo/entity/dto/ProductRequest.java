@@ -1,6 +1,7 @@
 package com.uade.tpo.demo.entity.dto;
 
 import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.User;
 
 import lombok.Data;
 
@@ -14,6 +15,5 @@ public class ProductRequest {
     private int stock;
     private Category category;
    // private Discount discount;
-    //private User owner;
-    private Long owner;
+    private User owner;
 }

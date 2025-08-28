@@ -1,22 +1,30 @@
 package com.uade.tpo.demo.entity;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.sql.Column;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@Table(name = "discount")
+@NoArgsConstructor
 public class Discount {
 
-    public Discount(){}
 
-    public Discount(int amount, String desc, Product product){
+    public Discount(int amount, String desc){
         this.amount = amount;
-        this.description = desc;
+        this.discountType= desc;
     }
 
     @Id
@@ -26,8 +34,13 @@ public class Discount {
     @Column(value = "Amount")
     private int amount;
 
-    @Column(value = "Description")
-    private String description;
+    @Column(value="Type of discount")
+    private String discountType;
+
+    @ManyToOne
+    @JoinColumn (name = "product_id", referencedColumnName = "id")
+    @JsonIgnore
+    private List<Product> product;
 
     
 }

@@ -1,5 +1,6 @@
 package com.uade.tpo.demo.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -10,14 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Data
 @NoArgsConstructor
 public class User {
 
     public User(String nombre, String email){
-        this.nombre = nombre;
+        this.name = nombre;
         this.email = email;
         this.role = null;
         this.orders = null;
@@ -29,10 +32,18 @@ public class User {
     private Long id;
 
     @Column
-    private String nombre;
+    private String name;
 
     @Column
     private String email;
+    @Column
+    private String surname;
+    @Column 
+    private String password;
+    @Column
+    private int phone_number;
+    @Column
+    private LocalDateTime date;
 
     @OneToMany(mappedBy= "user") //cardinalidad. User es la FK para la relación
     private List<Order> orders;

@@ -88,6 +88,7 @@ public class ProductServiceImpl implements ProductService{
         product.setPrice(newAmount);
     }
 
+    //aceptar el productRequest. Modify
     @Override
     public Product createProduct(String name, String desc, double price, int stock, Category cat, User owner)
             throws ProductDuplicateException {
