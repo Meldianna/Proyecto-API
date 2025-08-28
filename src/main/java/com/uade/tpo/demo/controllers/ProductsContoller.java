@@ -134,7 +134,10 @@ public class ProductsContoller {
      @DeleteMapping("/delete/{productId}")
      public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
 
+
+        
         productService.deleteProduct(productId);
+
         return ResponseEntity.noContent().build();
      }
      
