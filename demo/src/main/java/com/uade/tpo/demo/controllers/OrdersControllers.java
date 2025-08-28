@@ -50,7 +50,7 @@ public class OrdersControllers {
 
 
 
-    @GetMapping("/{categoryId}")
+    @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
         Optional<Order> result = orderService.getOrderById(orderId);
         if (result.isPresent())
@@ -69,7 +69,7 @@ public class OrdersControllers {
     }
 
 
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("delete/{orderId}")
     public ResponseEntity<Object> deleteById(@PathVariable Long orderId) {
         orderService.deleteById(orderId);
         return ResponseEntity.noContent().build();  
