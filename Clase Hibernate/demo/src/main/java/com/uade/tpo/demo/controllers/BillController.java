@@ -1,16 +1,13 @@
 package com.uade.tpo.demo.controllers;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import com.uade.tpo.demo.exceptions.BillDuplicateException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +21,11 @@ import com.uade.tpo.demo.entity.Bill;
 import com.uade.tpo.demo.entity.Order;
 import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.dto.BillRequest;
+import com.uade.tpo.demo.exceptions.BillDuplicateException;
 import com.uade.tpo.demo.exceptions.NoBillWithDateException;
 import com.uade.tpo.demo.exceptions.NoBillWithOrderId;
 import com.uade.tpo.demo.exceptions.NoBillWithUserId;
 import com.uade.tpo.demo.service.BillService;
-
-import io.micrometer.core.ipc.http.HttpSender;
 
 @RestController
 @RequestMapping("bills")
@@ -47,9 +43,9 @@ public class BillController {
             : ResponseEntity.ok(billService.getBills(PageRequest.of(page, size)));
             
         }
-    @GetMapping("/{billId}")
-    public ResponseEntity<Bill> getBillsById(@PathVariable Long facturaId){
-        Optional<Bill> result = billService.getBillsById(facturaId);
+    @GetMapping("/billId/{billId}")
+    public ResponseEntity<Bill> getBillsById(@PathVariable Long billId){
+        Optional<Bill> result = billService.getBillsById(billId);
         if(result.isPresent()){
             return ResponseEntity.ok(result.get());
         }else{
@@ -57,9 +53,10 @@ public class BillController {
         }
     }
 
-    @GetMapping("/{billsByUserId}")
+    
+    @GetMapping("/user/{userId}")
     public ResponseEntity<Page<Bill>> getBillsByUserId(
-        @PathVariable User userId,
+        @PathVariable Long userId,
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) Integer size)
         throws NoBillWithUserId{
@@ -74,9 +71,9 @@ public class BillController {
         }
         
     }
-
-    @GetMapping("/{billsByOrderId}")
-    public ResponseEntity<Bill> getBillsByOrderId(@PathVariable Order orderId) throws NoBillWithOrderId{
+    
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<Bill> getBillsByOrderId(@PathVariable Long orderId) throws NoBillWithOrderId{
         Optional<Bill> result = billService.getBillsByOrderId(orderId);
         if(result.isPresent()){
             return ResponseEntity.ok(result.get());
@@ -86,9 +83,9 @@ public class BillController {
         
     }
         
-    @GetMapping("/{billsByDate}")
-    public ResponseEntity<Page<Bill>> getBillsByDate(
-        @RequestParam LocalDate date, //sólo acepta formato fecha yyyy/mm/dd (universal)
+    @GetMapping("/date")
+    public ResponseEntity<Page<Bill>> getBillsByDate( //date?date=yyyy-mm-dd
+        @RequestParam LocalDate date, //sólo acepta formato fecha yyyy-mm-dd (universal)
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) Integer size)
         throws NoBillWithDateException{

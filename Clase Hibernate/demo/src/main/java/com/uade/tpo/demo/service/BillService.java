@@ -8,19 +8,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.uade.tpo.demo.entity.Bill;
-import com.uade.tpo.demo.entity.Order;
-import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.exceptions.BillDuplicateException;
 import com.uade.tpo.demo.exceptions.NoBillWithDateException;
 import com.uade.tpo.demo.exceptions.NoBillWithOrderId;
 import com.uade.tpo.demo.exceptions.NoBillWithUserId;
+import com.uade.tpo.demo.exceptions.NoUserIdException;
 
 
 public interface BillService {
     public Page<Bill> getBills(PageRequest pageRequest);
-    public Optional<Bill> getBillsById(Long facturaId);
-    public Page<Bill> getBillsByUserId(User userId, Pageable pageable) throws NoBillWithUserId;
-    public Optional<Bill> getBillsByOrderId(Order orderId) throws NoBillWithOrderId;
+    public Optional<Bill> getBillsById(Long id);
+    public Page<Bill> getBillsByUserId(Long userId, Pageable pageable) throws NoBillWithUserId, NoUserIdException;
+    public Optional<Bill> getBillsByOrderId(Long orderId) throws NoBillWithOrderId;
     public Page<Bill> getBillsByDate(LocalDate date, Pageable pageable) throws NoBillWithDateException;
-    public Bill createBill(Order orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException;
+    public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException;
 }

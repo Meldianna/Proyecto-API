@@ -11,12 +11,12 @@ import com.uade.tpo.demo.entity.User;
 public class BillRequest {
 
     private Long id;
-    private Order idOrder;
+    private Long idOrder;
 
     private double  precioTotal;
     private LocalDate date;
 
-    public Order getIdOrder() {
+    public Long getIdOrder() {
         return idOrder;
     }
     public double getPrecioTotal() {
