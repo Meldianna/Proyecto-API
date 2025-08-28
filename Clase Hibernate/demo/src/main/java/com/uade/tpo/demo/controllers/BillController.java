@@ -25,6 +25,7 @@ import com.uade.tpo.demo.exceptions.BillDuplicateException;
 import com.uade.tpo.demo.exceptions.NoBillWithDateException;
 import com.uade.tpo.demo.exceptions.NoBillWithOrderId;
 import com.uade.tpo.demo.exceptions.NoBillWithUserId;
+import com.uade.tpo.demo.exceptions.NoUserIdException;
 import com.uade.tpo.demo.service.BillService;
 
 @RestController
@@ -59,7 +60,7 @@ public class BillController {
         @PathVariable Long userId,
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) Integer size)
-        throws NoBillWithUserId{
+        throws NoBillWithUserId, NoUserIdException{
         Pageable pageable = (page == null || size == null)
             ? PageRequest.of(0, Integer.MAX_VALUE)
             : PageRequest.of(page, size);
