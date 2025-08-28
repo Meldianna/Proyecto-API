@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.demo.entity.Product;
+import com.uade.tpo.demo.entity.dto.CategoryResponse;
+import com.uade.tpo.demo.entity.dto.PriceUpdateRequest;
 import com.uade.tpo.demo.entity.dto.ProductRequest;
+import com.uade.tpo.demo.entity.dto.ProductResponse;
 import com.uade.tpo.demo.exceptions.NoSuchProductException;
+import com.uade.tpo.demo.service.CategoryServiceImpl;
 import com.uade.tpo.demo.service.ProductServiceImpl;
 
 
@@ -33,6 +37,9 @@ import com.uade.tpo.demo.service.ProductServiceImpl;
 public class ProductsContoller {
     @Autowired
    private ProductServiceImpl productService;
+
+   @Autowired
+   private CategoryServiceImpl categoryService;
 
     public ProductsContoller() {
     }
@@ -48,20 +55,10 @@ public class ProductsContoller {
      */
 
      //mostrar todos los productos
+     //Uso el DTO para todas las respuestas y requests. Sólo uso las entidades en el repo
      
-     /*public ResponseEntity<List<Product>> getAllProducts() {
-         return ResponseEntity.ok(productService.getAllProducts()); //agregar validación: si hay productos...
-     }*/
      @GetMapping
-     /*public ResponseEntity<Page<Product>> getAllProducts(
-             @RequestParam(defaultValue = "0") int page,
-             @RequestParam(defaultValue = "10") int size) {
-         
-         PageRequest pageable = PageRequest.of(page, size);
-         Page<Product> products = productService.getAllProducts(pageable);
-         return ResponseEntity.ok(products);
-     }*/
-    public ResponseEntity<Page<Product>> getAllProducts(
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size) {
         if (page == null || size == null)
@@ -71,48 +68,64 @@ public class ProductsContoller {
 
      //buscar por nombre
      @GetMapping("/name/{productName}")
-     public ResponseEntity<Product> getProductByName(@PathVariable String productName)  {
+     public ResponseEntity<ProductResponse> getProductByName(@PathVariable String productName)  {
         
-            Product result = productService.getProductByName(productName);
+            ProductResponse result = productService.getProductByName(productName);
+            if (result == null)
+                ResponseEntity.badRequest().body("Disculpa, pero no vendemos el producto que buscas.");
             return ResponseEntity.ok(result); //retorna una respuesta con código 200
        
 
     }
 
-     //buscar por categoría
-     @GetMapping("/category/{productCategory}") //o /category/{categoryId}
-     public ResponseEntity<List<Product>> getProductByCategory(@PathVariable Long productCategory) {
-            List<Product> products = productService.getProductByCategory(productCategory);
-            //validación para saber si existe la categoría??
+    //  buscar por categoría
+    //  @GetMapping("/category/{productCategory}") //o /category/{categoryId}
+    //  public ResponseEntity<List<Product>> getProductByCategory(@PathVariable Long productCategory) {
+    //         List<Product> products = productService.getProductByCategory(productCategory);
+    //         //validación para saber si existe la categoría??
 
-            if(products.isEmpty())
-            return ResponseEntity.noContent().build(); //instancia un objeto con BodyBuilder con código 204
+    //         if(products.isEmpty())
+    //         return ResponseEntity.noContent().build(); //instancia un objeto con BodyBuilder con código 204
 
-        return ResponseEntity.ok(products); //retorna una respuesta con código 200
+    //     return ResponseEntity.ok(products); //retorna una respuesta con código 200
+       
+    //  }
+
+    @GetMapping("/category/{productCategory}") //o /category/{categoryId}
+     public ResponseEntity<Object> getProductByCategory(@PathVariable Long productCategory) {
+            Optional<CategoryResponse> existingCategory = categoryService.getCategoryById(productCategory);
+            if (existingCategory.isPresent()){
+                List<ProductResponse> products = productService.getProductByCategory(productCategory);
+                return ResponseEntity.ok(products);
+                }
+            return ResponseEntity.badRequest().body("No existen productos bajo la categoría que buscas."); //instancia un objeto con BodyBuilder con código 204
+
+         
        
      }
-
+     
      //buscar por id
      @GetMapping("/{productId}") //o /search
-     public ResponseEntity<Product> getProductById(@PathVariable Long productId){
+     public ResponseEntity<Object> getProductById(@PathVariable Long productId){
 
-            Optional<Product> result = productService.getProductById(productId);
+            ProductResponse result = productService.getProductById(productId);
+            if (result == null)
+                ResponseEntity.badRequest().body("No existen productos con ese identificador.");
        
-            return ResponseEntity.ok(result.get()); //retorna una respuesta con código 200
+            return ResponseEntity.ok(result); //retorna una respuesta con código 200
         
 
     }
         
      
 
-     @PostMapping
+     @PostMapping("/create")
      public ResponseEntity<Object> createProduct(@RequestBody ProductRequest productRequest) {
             Product result = productService.createProduct(productRequest.getName(), //this should throw the exception
             productRequest.getDescription(),
             productRequest.getPrice(),
             productRequest.getStock(),
-            productRequest.getCategory(),
-            productRequest.getOwner());
+            productRequest.getCategory());
              
             return ResponseEntity.created(URI.create("/products/" + result.getId())).body(result);
      }
@@ -120,21 +133,17 @@ public class ProductsContoller {
 
      @DeleteMapping("/delete/{productId}")
      public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
-        try {
+
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
-        }catch(NoSuchProductException nspe){
-            return ResponseEntity.notFound().build();
-        }
-
      }
      
 
-     @PutMapping("/create/{productId}")
-     public ResponseEntity<Object> updateProductPrice(@PathVariable Long id, double newAmount) {
+     @PutMapping("/put/{productId}")
+     public ResponseEntity<Object> updateProductPrice(@PathVariable Long productId, PriceUpdateRequest request) {
 
         try {
-            productService.updateProductPrice(id, newAmount); //this line throws the exception
+            productService.updateProductPrice(productId, request); //this line throws the exception
             return ResponseEntity.ok("El precio fue actualizado.");
         } 
         catch (NoSuchProductException nspe){

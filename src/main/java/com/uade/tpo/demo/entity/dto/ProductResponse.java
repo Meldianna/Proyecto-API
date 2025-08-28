@@ -1,14 +1,20 @@
 package com.uade.tpo.demo.entity.dto;
 
+import com.uade.tpo.demo.entity.Discount;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class ProductResponse {
     private Long id;
     private String name;
     private Double price;
     private int stock;
-   private Long categoryId;
+    private Long categoryId;
+    private Discount discount;
+
     //user no porque no queremos saber el usuario que creó el producto
 
     public ProductResponse(Long id, String name, Double price, int stock, Long productCategory) {

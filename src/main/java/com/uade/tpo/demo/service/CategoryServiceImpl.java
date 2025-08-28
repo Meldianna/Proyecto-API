@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.dto.CategoryResponse;
 import com.uade.tpo.demo.exceptions.CategoryDuplicateException;
 import com.uade.tpo.demo.repository.CategoryRepository;
 
@@ -22,8 +23,9 @@ public class CategoryServiceImpl implements CategoryService{
         return categoryRepository.findAll(pageable);
     }
 
-    public Optional<Category> getCategoryById(Long categoryId) {
-        return categoryRepository.findById(categoryId);
+    public Optional<CategoryResponse> getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+        .map(category -> new CategoryResponse(category.getDescription()));
     }
 
    public Category createCategory(String description) throws CategoryDuplicateException {

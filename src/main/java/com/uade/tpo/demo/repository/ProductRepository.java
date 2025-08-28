@@ -1,7 +1,6 @@
 package com.uade.tpo.demo.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
     public Product getProductByName(String name);
 
     @Query(value="select p from Product p where p.id = :id")
-    public Optional<Product> getProductById(Long id);
+    public Product getProductById(Long id);
 
     @Query(value="select p from Product p where p.category = :productCategory")
     public List<Product> getProductByCategory(@RequestParam("productCategory") Long id);
