@@ -63,8 +63,7 @@ public class OrdersControllers {
     @PostMapping
     public ResponseEntity<Object> createOrder(@RequestBody OrderRequest orderRequest)
             throws OrderDuplicateException {
-        Order result = orderService.createOrder(orderRequest.getTotalPrice(), orderRequest.getUserId(),orderRequest.getDate()
-         ,orderRequest.getStatus(), orderRequest.getDeliveryType(), orderRequest.getPaymentMethod());
+        Order result = orderService.createOrder(orderRequest);
         return ResponseEntity.created(URI.create("/orders/" + result.getId())).body(result);
     }
 

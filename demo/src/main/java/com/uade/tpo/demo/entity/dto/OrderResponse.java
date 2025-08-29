@@ -1,22 +1,20 @@
 package com.uade.tpo.demo.entity.dto;
 
-
 import java.time.LocalDateTime;
 
 import com.uade.tpo.demo.entity.DeliveryType;
 import com.uade.tpo.demo.entity.PaymentMethod;
-import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.Status;
+import com.uade.tpo.demo.entity.User;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
 @Data
+@AllArgsConstructor
 
-
-
-
-public class OrderRequest {
+public class OrderResponse {
     private Long id;
     private float totalPrice;
     private LocalDateTime date;
@@ -24,6 +22,14 @@ public class OrderRequest {
     private Status status;
     private DeliveryType deliveryType;
     private PaymentMethod paymentMethod;
-}
 
+
+    public OrderResponse() {
+
+    }
+
+
+
+
+}
 
