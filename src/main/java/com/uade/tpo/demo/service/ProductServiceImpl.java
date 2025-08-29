@@ -59,10 +59,7 @@ public class ProductServiceImpl implements ProductService{
         .collect(Collectors.toList());
     }
 
-    //metodo para convertir Product a ProductResponse
-    public ProductResponse toProductResponse(Product product){
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), product.getStock(), product.getCategory().getId());
-    }
+    
 
     @Override
     @Transactional
@@ -100,5 +97,10 @@ public class ProductServiceImpl implements ProductService{
                 
                 
                 return productRepository.save(new Product(name, desc, price, stock, cat, owner));
+    }
+
+    //metodo para convertir Product a ProductResponse
+    public ProductResponse toProductResponse(Product product){
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), product.getStock(), product.getCategory().getId());
     }
 }
