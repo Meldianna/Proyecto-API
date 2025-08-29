@@ -125,7 +125,8 @@ public class ProductsContoller {
             productRequest.getDescription(),
             productRequest.getPrice(),
             productRequest.getStock(),
-            productRequest.getCategory());
+            productRequest.getCategory(),
+            productRequest.getOwner());
              
             return ResponseEntity.created(URI.create("/products/" + result.getId())).body(result);
      }
