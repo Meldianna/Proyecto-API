@@ -18,12 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uade.tpo.demo.entity.Product;
+import com.uade.tpo.demo.entity.Discount;
 import com.uade.tpo.demo.entity.dto.CategoryResponse;
 import com.uade.tpo.demo.entity.dto.PriceUpdateRequest;
 import com.uade.tpo.demo.entity.dto.ProductRequest;
 import com.uade.tpo.demo.entity.dto.ProductResponse;
+import com.uade.tpo.demo.exceptions.NoSuchCategoryException;
+import com.uade.tpo.demo.exceptions.NoSuchDiscountException;
 import com.uade.tpo.demo.exceptions.NoSuchProductException;
+import com.uade.tpo.demo.exceptions.NoUserIdException;
+import com.uade.tpo.demo.exceptions.ProductDuplicateException;
 import com.uade.tpo.demo.service.CategoryServiceImpl;
 import com.uade.tpo.demo.service.ProductServiceImpl;
 
@@ -121,25 +125,31 @@ public class ProductsContoller {
 
      @PostMapping("/create")
      public ResponseEntity<Object> createProduct(@RequestBody ProductRequest productRequest) {
-            Product result = productService.createProduct(productRequest.getName(), //this should throw the exception
-            productRequest.getDescription(),
-            productRequest.getPrice(),
-            productRequest.getStock(),
-            productRequest.getCategory(),
-            productRequest.getOwner());
+        try {
+            ProductResponse result = productService.createProduct(productRequest);
              
             return ResponseEntity.created(URI.create("/products/" + result.getId())).body(result);
+
+        } catch (ProductDuplicateException | NoSuchCategoryException pde) {
+            return ResponseEntity.badRequest().build();
+        } catch (NoUserIdException nuie){
+            return ResponseEntity.notFound().build();
+        }
+        
      }
 
 
      @DeleteMapping("/delete/{productId}")
      public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
-
+        try {
+            productService.deleteProduct(productId);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchProductException nspe) {
+            return ResponseEntity.notFound().build();
+        }
 
         
-        productService.deleteProduct(productId);
-
-        return ResponseEntity.noContent().build();
+        
      }
      
 
@@ -155,6 +165,38 @@ public class ProductsContoller {
         }     
     }
 
-     //add possibility to associate discounts
+     //adding discounts by its id
+     @PostMapping("/{productId}/discount")
+     public ResponseEntity<Object> addDiscountById(@PathVariable Long productId, @RequestBody Discount d) {
+        try {
+            productService.addDiscountById(productId, d);
+            return ResponseEntity.ok().body("El descuento se agregó correctamente al producto");
 
+        } catch (NoSuchProductException e) {
+            return ResponseEntity.notFound().build();
+
+        }catch (NoSuchDiscountException nsde){
+            return ResponseEntity.badRequest().body("El descuento que quiere aplicar no existe.");
+        }
+         
+     }
+
+     //adding discounts by their category
+     @PostMapping("/{categoryId}/discount")
+        public ResponseEntity<Object> addDiscountByCat(@PathVariable Long categoryId, @RequestBody Discount d) {
+            try {
+                productService.addDiscountByCat(categoryId, d);
+                return ResponseEntity.ok().body("El descuento se agregó correctamente al producto");
+    
+            } catch (NoSuchProductException e) {
+                return ResponseEntity.notFound().build();
+    
+            }catch (NoSuchDiscountException nsde){
+                return ResponseEntity.badRequest().body("El descuento que quiere aplicar no existe.");
+            }
+            catch (NoSuchCategoryException nsce){
+                return ResponseEntity.notFound().build();
+            }
+     }
+     
 }

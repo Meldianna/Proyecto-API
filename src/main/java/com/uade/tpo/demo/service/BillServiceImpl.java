@@ -76,12 +76,13 @@ public class BillServiceImpl implements BillService {
 
 
 	@Override
-	public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException {
+	public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException, NoBillWithOrderId {
 		if (billRepository.findByOrderId(orderId).isPresent()){ //si la factura ya existe
 			throw new BillDuplicateException();
 		}
+		//corregir exception
 		Order existingOrder = orderRepository.findById(orderId) //si la orden no existe, no se puede crear la factura
-				.orElseThrow(() -> new BillDuplicateException()); //referencia a la construcción de la excepción
+				.orElseThrow(() -> new NoBillWithOrderId()); //referencia a la construcción de la excepción
 		Bill newBill = new Bill(existingOrder, precioTotal, fecha);
 		return billRepository.save(newBill);
 	}

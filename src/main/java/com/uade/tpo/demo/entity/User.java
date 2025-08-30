@@ -3,6 +3,8 @@ package com.uade.tpo.demo.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,7 +43,7 @@ public class User {
     @Column 
     private String password;
     @Column
-    private int phone_number;
+    private Long phone_number;
     @Column
     private LocalDateTime date;
 
@@ -57,6 +59,7 @@ public class User {
     private Role role; //FK
 
     @OneToMany(mappedBy="owner")
+    @JsonIgnore
     private List<Product> products;
 
 

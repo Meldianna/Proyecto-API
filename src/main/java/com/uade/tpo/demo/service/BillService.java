@@ -22,5 +22,5 @@ public interface BillService {
     public Page<BillResponse> getBillsByUserId(Long userId, Pageable pageable) throws NoBillWithUserId, NoUserIdException;
     public Optional<BillResponse> getBillsByOrderId(Long orderId) throws NoBillWithOrderId;
     public Page<BillResponse> getBillsByDate(LocalDate date, Pageable pageable) throws NoBillWithDateException;
-    public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException;
+    public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException, NoBillWithOrderId;
 }

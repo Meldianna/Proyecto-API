@@ -9,13 +9,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.Discount;
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.dto.PriceUpdateRequest;
+import com.uade.tpo.demo.entity.dto.ProductRequest;
 import com.uade.tpo.demo.entity.dto.ProductResponse;
+import com.uade.tpo.demo.exceptions.NoSuchCategoryException;
+import com.uade.tpo.demo.exceptions.NoSuchDiscountException;
 import com.uade.tpo.demo.exceptions.NoSuchProductException;
+import com.uade.tpo.demo.exceptions.NoUserIdException;
 import com.uade.tpo.demo.exceptions.ProductDuplicateException;
+import com.uade.tpo.demo.repository.CategoryRepository;
+import com.uade.tpo.demo.repository.DiscountRepository;
 import com.uade.tpo.demo.repository.ProductRepository;
+import com.uade.tpo.demo.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -23,6 +31,16 @@ import jakarta.transaction.Transactional;
 public class ProductServiceImpl implements ProductService{
     @Autowired
     private ProductRepository productRepository;
+
+    //service or repo??
+    @Autowired
+    private DiscountRepository discountRepository;
+
+    @Autowired
+    private CategoryRepository catRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
@@ -59,7 +77,10 @@ public class ProductServiceImpl implements ProductService{
         .collect(Collectors.toList());
     }
 
-    
+     //metodo para convertir Product a ProductResponse
+     public ProductResponse toProductResponse(Product product){
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), product.getStock(), product.getCategory().getId());
+    }
 
     @Override
     @Transactional
@@ -85,22 +106,59 @@ public class ProductServiceImpl implements ProductService{
         product.setPrice(newAmount);
     }
 
-    //aceptar el productRequest. Modify
     @Override
-    public Product createProduct(String name, String desc, double price, int stock, Category cat, User owner)
-            throws ProductDuplicateException {
-                Product existingProduct = productRepository.getProductByName(name);
+    public ProductResponse createProduct(ProductRequest productRequest)
+            throws ProductDuplicateException, NoSuchCategoryException, NoUserIdException {
+                Product existingProduct = productRepository.getProductByName(productRequest.getName());
     
                 if (existingProduct != null) {  
                     throw new ProductDuplicateException();
                 }
-                
-                
-                return productRepository.save(new Product(name, desc, price, stock, cat, owner));
+                Category categoryRef = catRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(()  -> new NoSuchCategoryException()); 
+
+                User userRef = userRepository.findById(productRequest.getOwnerId())
+                .orElseThrow(() -> new NoUserIdException()); 
+
+                Product productCreated =  productRepository.save(new Product(productRequest.getName(), 
+                productRequest.getDescription(), 
+                productRequest.getPrice(), 
+                productRequest.getStock(),
+                categoryRef, 
+                userRef));
+
+                return toProductResponse(productCreated);
     }
 
-    //metodo para convertir Product a ProductResponse
-    public ProductResponse toProductResponse(Product product){
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), product.getStock(), product.getCategory().getId());
+    @Override
+    @Transactional
+    public void addDiscountById(Long productId, Discount d) throws NoSuchProductException, NoSuchDiscountException{
+        Discount existingDiscount = discountRepository.findById(d.getId())
+        .orElseThrow(() ->  new NoSuchDiscountException());
+        
+        Product existingProduct = productRepository.getProductById(productId);
+        if (existingProduct == null)
+            throw new NoSuchProductException();
+
+        existingProduct.setDiscount(d);
     }
+
+    @Override
+    @Transactional
+    public void addDiscountByCat(Long categoryId, Discount d) throws NoSuchCategoryException, NoSuchDiscountException{
+        Discount existingDiscount = discountRepository.findById(d.getId())
+        .orElseThrow(() ->  new NoSuchDiscountException());
+        
+        
+        Category existingCategory = catRepository.findById(categoryId)
+        .orElseThrow(() -> new NoSuchCategoryException());
+
+        List<ProductResponse> products = this.getProductByCategory(categoryId);
+        products.forEach(product -> product.setDiscount(d)); //adding the discount to each product
+        
+    }
+
+
+
+   
 }
