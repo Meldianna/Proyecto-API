@@ -1,6 +1,5 @@
 package com.uade.tpo.demo.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,13 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.uade.tpo.demo.repository.OrderRepository;
-import com.uade.tpo.demo.repository.UserRepository;
-import com.uade.tpo.demo.entity.DeliveryType;
 import com.uade.tpo.demo.entity.Order;
-import com.uade.tpo.demo.entity.PaymentMethod;
-import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.dto.OrderRequest;
-import com.uade.tpo.demo.entity.dto.OrderResponse;
 import com.uade.tpo.demo.exceptions.OrderDuplicateException;
 
 @Service
@@ -55,9 +49,8 @@ public class OrderServiceImp implements OrderService {
     }
     */
 
-    public ResponseEntity<Object> deleteById(@PathVariable Long orderId) {
+    public void deleteById(@PathVariable Long orderId) {
         orderRepository.deleteById(orderId);
-        return ResponseEntity.noContent().build();  
     }
 
 
@@ -83,7 +76,6 @@ public class OrderServiceImp implements OrderService {
     public Order createOrder(OrderRequest orderRequest) throws OrderDuplicateException {
         Order order = new Order(orderRequest.getTotalPrice(), orderRequest.getDate(),orderRequest.getUserId(),
          orderRequest.getDeliveryType(), orderRequest.getPaymentMethod());
-
             return orderRepository.save(order);
     }
 

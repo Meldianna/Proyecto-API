@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import com.uade.tpo.demo.entity.DeliveryType;
 import com.uade.tpo.demo.entity.PaymentMethod;
-import com.uade.tpo.demo.entity.Status;
 import com.uade.tpo.demo.entity.User;
 
 import lombok.AllArgsConstructor;
@@ -19,16 +18,19 @@ public class OrderResponse {
     private float totalPrice;
     private LocalDateTime date;
     private User userId;
-    private Status status;
     private DeliveryType deliveryType;
     private PaymentMethod paymentMethod;
 
 
-    public OrderResponse() {
-
+    public OrderResponse(long id, float totalPrice, LocalDateTime date, User userId,
+            DeliveryType deliveryType, PaymentMethod paymentMethod) {
+        this.id = id;
+        this.totalPrice = totalPrice;
+        this.date = date;
+        this.userId = userId;
+        this.deliveryType = deliveryType;
+        this.paymentMethod = paymentMethod;
     }
-
-
 
 
 }

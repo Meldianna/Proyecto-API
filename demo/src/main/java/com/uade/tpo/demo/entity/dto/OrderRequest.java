@@ -6,24 +6,26 @@ import java.time.LocalDateTime;
 import com.uade.tpo.demo.entity.DeliveryType;
 import com.uade.tpo.demo.entity.PaymentMethod;
 import com.uade.tpo.demo.entity.User;
-import com.uade.tpo.demo.entity.Status;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
 @Data
 
 
-
+@AllArgsConstructor
 
 public class OrderRequest {
-    private Long id;
     private float totalPrice;
     private LocalDateTime date;
     private User userId;
-    private Status status;
     private DeliveryType deliveryType;
     private PaymentMethod paymentMethod;
+
+
+
+
 }
 
 

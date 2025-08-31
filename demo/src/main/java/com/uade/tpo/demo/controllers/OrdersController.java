@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @Builder
 @RestController
 @RequestMapping("orders")
-public class OrdersControllers {
+public class OrdersController {
 
     @Autowired
     private OrderService orderService;
@@ -69,9 +69,8 @@ public class OrdersControllers {
 
 
     @DeleteMapping("delete/{orderId}")
-    public ResponseEntity<Object> deleteById(@PathVariable Long orderId) {
-        orderService.deleteById(orderId);
-        return ResponseEntity.noContent().build();  
+    public void deleteById(@PathVariable Long orderId) {
+        orderService.deleteById(orderId); 
     }
 
 

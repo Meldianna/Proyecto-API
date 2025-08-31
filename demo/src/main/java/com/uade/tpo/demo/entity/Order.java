@@ -25,12 +25,11 @@ public class Order {
     public Order() {
     }
 
-    public Order(float totalPrice, LocalDateTime date, User user, Status status, DeliveryType deliveryType,
+    public Order(float totalPrice, LocalDateTime date, User user, DeliveryType deliveryType,
             PaymentMethod paymentMethod) {
         this.totalPrice = totalPrice;
         this.date = date;
         this.user = user;
-        this.status = status;
         this.deliveryType = deliveryType;
         this.paymentMethod = paymentMethod;
     }
@@ -51,9 +50,6 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "delivey_type", nullable = false)

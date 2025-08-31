@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.uade.tpo.demo.entity.Order;
 import com.uade.tpo.demo.entity.dto.OrderRequest;
-import com.uade.tpo.demo.entity.dto.OrderResponse;
 import com.uade.tpo.demo.exceptions.OrderDuplicateException;
 
 public interface OrderService {
@@ -28,10 +27,11 @@ public interface OrderService {
     public Order createOrder(OrderRequest orderRequest ) throws OrderDuplicateException;
 
 
-    public ResponseEntity<Object> deleteById(@PathVariable Long orderId);
+    public void deleteById(@PathVariable Long orderId);
 
 
 
     public String putMethodName(@PathVariable String id, @RequestBody String entity);
+
 
 }
