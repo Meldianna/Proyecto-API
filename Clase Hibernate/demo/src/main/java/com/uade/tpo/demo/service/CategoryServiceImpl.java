@@ -9,27 +9,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.demo.entity.Category;
+import com.uade.tpo.demo.entity.dto.CategoryResponse;
 import com.uade.tpo.demo.exceptions.CategoryDuplicateException;
 import com.uade.tpo.demo.repository.CategoryRepository;
 
 @Service
-public class CategoryServiceImpl implements CategoryService {
-
+public class CategoryServiceImpl implements CategoryService{
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public Page<Category> getCategories(PageRequest pageable) {
+
+   public Page<Category> getCategories(PageRequest pageable) {
         return categoryRepository.findAll(pageable);
     }
 
-    public Optional<Category> getCategoryById(Long categoryId) {
-        return categoryRepository.findById(categoryId);
+    public Optional<CategoryResponse> getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+        .map(category -> new CategoryResponse(category.getDescription()));
     }
 
-    public Category createCategory(String description) throws CategoryDuplicateException {
-        List<Category> categories = categoryRepository.findByDescription(description);
-        if (categories.isEmpty())
-            return categoryRepository.save(new Category(description));
-        throw new CategoryDuplicateException();
-    }
+   public Category createCategory(String description) throws CategoryDuplicateException {
+        List<Category> categories = categoryRepository.findByDescription(description); //retorna una lista. Se comprueba si existe la categoría verificando si la lista tiene elementos
+        if (categories.isEmpty()) //si está vacía, no hay elementos
+        return categoryRepository.save(new Category(description));
+    throw new CategoryDuplicateException();
+   }
+    
 }

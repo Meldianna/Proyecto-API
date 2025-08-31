@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.demo.entity.Bill;
-import com.uade.tpo.demo.entity.Order;
-import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.dto.BillRequest;
+import com.uade.tpo.demo.entity.dto.BillResponse;
 import com.uade.tpo.demo.exceptions.BillDuplicateException;
 import com.uade.tpo.demo.exceptions.NoBillWithDateException;
 import com.uade.tpo.demo.exceptions.NoBillWithOrderId;
@@ -36,7 +35,7 @@ public class BillController {
     private BillService billService;
 
     @GetMapping
-    public ResponseEntity<Page<Bill>> getBills(
+    public ResponseEntity<Page<BillResponse>> getBills(
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) Integer size){
         return page == null || size == null
@@ -45,8 +44,8 @@ public class BillController {
             
         }
     @GetMapping("/billId/{billId}")
-    public ResponseEntity<Bill> getBillsById(@PathVariable Long billId){
-        Optional<Bill> result = billService.getBillsById(billId);
+    public ResponseEntity<BillResponse> getBillsById(@PathVariable Long billId){
+        Optional<BillResponse> result = billService.getBillsById(billId);
         if(result.isPresent()){
             return ResponseEntity.ok(result.get());
         }else{
@@ -56,7 +55,7 @@ public class BillController {
 
     
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<Bill>> getBillsByUserId(
+    public ResponseEntity<Page<BillResponse>> getBillsByUserId(
         @PathVariable Long userId,
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) Integer size)
@@ -64,7 +63,7 @@ public class BillController {
         Pageable pageable = (page == null || size == null)
             ? PageRequest.of(0, Integer.MAX_VALUE)
             : PageRequest.of(page, size);
-        Page<Bill> billPage = billService.getBillsByUserId(userId, pageable);
+        Page<BillResponse> billPage = billService.getBillsByUserId(userId, pageable);
         if(billPage.hasContent()){
             return ResponseEntity.ok(billPage);
         }else{
@@ -74,8 +73,8 @@ public class BillController {
     }
     
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<Bill> getBillsByOrderId(@PathVariable Long orderId) throws NoBillWithOrderId{
-        Optional<Bill> result = billService.getBillsByOrderId(orderId);
+    public ResponseEntity<BillResponse> getBillsByOrderId(@PathVariable Long orderId) throws NoBillWithOrderId{
+        Optional<BillResponse> result = billService.getBillsByOrderId(orderId);
         if(result.isPresent()){
             return ResponseEntity.ok(result.get());
         }else{
@@ -85,7 +84,7 @@ public class BillController {
     }
         
     @GetMapping("/date")
-    public ResponseEntity<Page<Bill>> getBillsByDate( //date?date=yyyy-mm-dd
+    public ResponseEntity<Page<BillResponse>> getBillsByDate( //date?date=yyyy-mm-dd
         @RequestParam LocalDate date, //sólo acepta formato fecha yyyy-mm-dd (universal)
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) Integer size)
@@ -93,7 +92,7 @@ public class BillController {
         Pageable pageable = (page == null || size == null)
             ? PageRequest.of(0, Integer.MAX_VALUE)
             : PageRequest.of(page, size);
-        Page<Bill> billPage = billService.getBillsByDate(date, pageable);
+        Page<BillResponse> billPage = billService.getBillsByDate(date, pageable);
         if(billPage.hasContent()){
             return ResponseEntity.ok(billPage);
         }else{
@@ -105,8 +104,13 @@ public class BillController {
     @PostMapping
     public ResponseEntity<Object> createBill(@RequestBody BillRequest billRequest)
             throws BillDuplicateException{
-        Bill result = billService.createBill(billRequest.getIdOrder(),  billRequest.getPrecioTotal(), billRequest.getFecha());
-        return ResponseEntity.created(URI.create("bills/" + result.getId())).body(result);
+                try {
+                    Bill result = billService.createBill(billRequest.getIdOrder(),  billRequest.getPrecioTotal(), billRequest.getFecha());
+                    return ResponseEntity.created(URI.create("bills/" + result.getId())).body(result);
+                } catch (NoBillWithOrderId nbwoi) {
+                    return ResponseEntity.notFound().build();
+                }
+       
         
     }
 

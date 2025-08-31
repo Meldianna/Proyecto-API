@@ -1,7 +1,6 @@
 package com.uade.tpo.demo.service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,37 +11,42 @@ import org.springframework.stereotype.Service;
 
 import com.uade.tpo.demo.entity.Bill;
 import com.uade.tpo.demo.entity.Order;
-import com.uade.tpo.demo.entity.User;
+import com.uade.tpo.demo.entity.dto.BillResponse;
 import com.uade.tpo.demo.exceptions.BillDuplicateException;
 import com.uade.tpo.demo.exceptions.NoBillWithDateException;
 import com.uade.tpo.demo.exceptions.NoBillWithOrderId;
 import com.uade.tpo.demo.exceptions.NoBillWithUserId;
 import com.uade.tpo.demo.exceptions.NoUserIdException;
 import com.uade.tpo.demo.repository.BillRepository;
+import com.uade.tpo.demo.repository.OrderRepository;
+import com.uade.tpo.demo.repository.UserRepository;
 
 @Service
 public class BillServiceImpl implements BillService {
 
 	
-	@Autowires
+	@Autowired
 	private OrderRepository orderRepository;
 
-	@Autowires
+	@Autowired
 	private UserRepository userRepository;
 	
     @Autowired
     private BillRepository billRepository;
+
 	@Override
-	public Page<Bill> getBills(PageRequest pageable) {
-		return billRepository.findAll(pageable); //este metodo permite devolver una lista de facturas
+	public Page<BillResponse> getBills(PageRequest pageable) {
+		return billRepository.findAll(pageable)
+		.map(this::toBillResponse); //este metodo permite devolver una lista de facturas
     }
 	@Override
-	public Optional<Bill> getBillsById(Long billId){
-		return billRepository.findById(billId);
+	public Optional<BillResponse> getBillsById(Long billId){
+		return billRepository.findById(billId)
+		.map(this::toBillResponse);
 	}
 	
 	@Override
-	public Page<Bill> getBillsByUserId(Long userId, Pageable pageable) throws NoBillWithUserId, NoUserIdException {
+	public Page<BillResponse> getBillsByUserId(Long userId, Pageable pageable) throws NoBillWithUserId, NoUserIdException {
 		if(userRepository.findById(userId).isEmpty()){ //si el usuario no existe
 			throw new NoUserIdException();
 		}
@@ -50,35 +54,40 @@ public class BillServiceImpl implements BillService {
 		if (existingBills.isEmpty()){
 			throw new NoBillWithUserId();
 		}
-		return existingBills;
+		return existingBills.map(this::toBillResponse); //mapea la página a BillResponse
 	}
 
 	@Override
-	public Optional<Bill> getBillsByOrderId(Long orderId) throws NoBillWithOrderId {
+	public Optional<BillResponse> getBillsByOrderId(Long orderId) throws NoBillWithOrderId {
 		Optional<Bill> existingBill = billRepository.findByOrderId(orderId);
 		if (!existingBill.isPresent()){
 			throw new NoBillWithOrderId();
 		}
-		return existingBill;
+		return existingBill.map(this::toBillResponse);
 	}
 	@Override
-	public Page<Bill> getBillsByDate(LocalDate date, Pageable pageable) throws NoBillWithDateException {
+	public Page<BillResponse> getBillsByDate(LocalDate date, Pageable pageable) throws NoBillWithDateException {
 		Page<Bill> existingBills = billRepository.findByDate(date, pageable);
 		if (!existingBills.hasContent()){
 			throw new NoBillWithDateException();
 		}
-		return billRepository.findByDate(date, pageable);
+		return billRepository.findByDate(date, pageable).map(this::toBillResponse); //mapeo a Bill Response
 	}
 
 
 	@Override
-	public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException {
+	public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException, NoBillWithOrderId {
 		if (billRepository.findByOrderId(orderId).isPresent()){ //si la factura ya existe
 			throw new BillDuplicateException();
 		}
+		//corregir exception
 		Order existingOrder = orderRepository.findById(orderId) //si la orden no existe, no se puede crear la factura
-				.orElseThrow(() -> NoBillWithOrderId::new); //referencia a la construcción de la excepción
+				.orElseThrow(() -> new NoBillWithOrderId()); //referencia a la construcción de la excepción
 		Bill newBill = new Bill(existingOrder, precioTotal, fecha);
 		return billRepository.save(newBill);
+	}
+
+	public BillResponse toBillResponse(Bill bill){
+		return new BillResponse(bill.getId(), bill.getOrder().getId(), bill.getPrecioTotal(), bill.getDate());
 	}
 }

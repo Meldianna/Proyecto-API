@@ -2,9 +2,6 @@ package com.uade.tpo.demo.entity.dto;
 
 import java.time.LocalDate;
 
-import com.uade.tpo.demo.entity.Order;
-import com.uade.tpo.demo.entity.User;
-
 //import lombok.Data;
 
 //@Data
