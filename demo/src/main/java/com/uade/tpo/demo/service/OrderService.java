@@ -27,11 +27,5 @@ public interface OrderService {
     public Order createOrder(OrderRequest orderRequest ) throws OrderDuplicateException;
 
 
-    public void deleteById(@PathVariable Long orderId);
-
-
-
-    public String putMethodName(@PathVariable String id, @RequestBody String entity);
-
 
 }

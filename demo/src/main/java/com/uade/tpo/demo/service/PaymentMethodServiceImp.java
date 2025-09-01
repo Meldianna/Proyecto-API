@@ -3,10 +3,14 @@ package com.uade.tpo.demo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import com.uade.tpo.demo.entity.PaymentMethod;
 import com.uade.tpo.demo.entity.dto.PaymentMethodRequest;
+import com.uade.tpo.demo.exceptions.NoSuchPaymentMethodException;
 import com.uade.tpo.demo.exceptions.PaymentMethodDuplicateException;
 import com.uade.tpo.demo.repository.PaymentMethodRepository;
 
@@ -32,8 +36,23 @@ public class PaymentMethodServiceImp implements PaymentMethodService {
 
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
+
+        if (!paymentMethodRepository.existsById(id)) {
+            throw new NoSuchPaymentMethodException();
+        }
         paymentMethodRepository.deleteById(id);
+    }
+
+
+
+    @Override
+     public void updatePaymentMethod( Long id, PaymentMethodRequest request) throws NoSuchPaymentMethodException {
+        PaymentMethod existingPaymentMethod = paymentMethodRepository.findById(id)
+            .orElseThrow(NoSuchPaymentMethodException::new);
+
+        existingPaymentMethod.setDescription(request.getDescription());
+        paymentMethodRepository.save(existingPaymentMethod);
     }
 
 

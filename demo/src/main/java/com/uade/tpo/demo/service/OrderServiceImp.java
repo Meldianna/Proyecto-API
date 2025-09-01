@@ -49,24 +49,7 @@ public class OrderServiceImp implements OrderService {
     }
     */
 
-    public void deleteById(@PathVariable Long orderId) {
-        orderRepository.deleteById(orderId);
-    }
 
-
-
-
-    public String putMethodName(@PathVariable String id, @RequestBody String entity) {
-        return orderRepository.findById(Long.valueOf(id)).map(order -> {
-            // Aquí puedes actualizar los campos del objeto 'order' con los valores del 'entity'
-            // Por ejemplo, si 'entity' es un JSON, puedes mapear sus campos al objeto 'order'
-            // order.setCampo(entity.getCampo());
-            // order.setOtroCampo(entity.getOtroCampo());
-            // Guarda el objeto actualizado en la base de datos
-            orderRepository.save(order);
-            return "Order updated successfully";
-        }).orElse("Order not found");
-    }
 
 
 

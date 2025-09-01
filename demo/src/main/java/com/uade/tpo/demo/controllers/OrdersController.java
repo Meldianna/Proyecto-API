@@ -68,17 +68,7 @@ public class OrdersController {
     }
 
 
-    @DeleteMapping("delete/{orderId}")
-    public void deleteById(@PathVariable Long orderId) {
-        orderService.deleteById(orderId); 
-    }
-
-
     
-    @PutMapping("path/{id}")
-    public String putMethodName(@PathVariable String id, @RequestBody String entity) {
-        return entity;
-    }
 
     
 }
