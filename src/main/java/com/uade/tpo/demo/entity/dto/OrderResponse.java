@@ -1,6 +1,5 @@
 package com.uade.tpo.demo.entity.dto;
 
-
 import java.time.LocalDateTime;
 
 import com.uade.tpo.demo.entity.DeliveryType;
@@ -12,11 +11,10 @@ import lombok.Data;
 
 
 @Data
-
-
 @AllArgsConstructor
 
-public class OrderRequest {
+public class OrderResponse {
+    private Long id;
     private float totalPrice;
     private LocalDateTime date;
     private User userId;
@@ -24,8 +22,16 @@ public class OrderRequest {
     private PaymentMethod paymentMethod;
 
 
+    public OrderResponse(long id, float totalPrice, LocalDateTime date, User userId,
+            DeliveryType deliveryType, PaymentMethod paymentMethod) {
+        this.id = id;
+        this.totalPrice = totalPrice;
+        this.date = date;
+        this.userId = userId;
+        this.deliveryType = deliveryType;
+        this.paymentMethod = paymentMethod;
+    }
 
 
 }
-
 
