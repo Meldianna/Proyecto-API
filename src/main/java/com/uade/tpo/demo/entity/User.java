@@ -7,12 +7,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -47,20 +50,23 @@ public class User {
     @Column
     private LocalDateTime date;
 
+    @Column
+    private boolean active;
+
     @OneToMany(mappedBy= "user") //cardinalidad. User es la FK para la relación
     private List<Order> orders;
-
-    /*@ManyToMany
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles;*/
    
-    @ManyToOne
-    @JoinColumn(name="role_id")
-    private Role role; //FK
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role; 
 
+    //Representa todos los productos que crea el administrador/vendedor
     @OneToMany(mappedBy="owner")
     @JsonIgnore
     private List<Product> products;
+
+    @OneToOne(mappedBy="user")
+    private Cart cart;
 
 
 }

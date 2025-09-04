@@ -103,9 +103,6 @@ public class ProductsContoller {
                 return ResponseEntity.ok(products);
                 }
             return ResponseEntity.badRequest().body("No existen productos bajo la categoría que buscas."); //instancia un objeto con BodyBuilder con código 204
-
-         
-       
      }
      
      //buscar por id
@@ -117,8 +114,6 @@ public class ProductsContoller {
                 ResponseEntity.badRequest().body("No existen productos con ese identificador.");
        
             return ResponseEntity.ok(result); //retorna una respuesta con código 200
-        
-
     }
         
      
@@ -130,7 +125,7 @@ public class ProductsContoller {
              
             return ResponseEntity.created(URI.create("/products/" + result.getId())).body(result);
 
-        } catch (ProductDuplicateException | NoSuchCategoryException pde) {
+        } catch (ProductDuplicateException | NoSuchCategoryException e) {
             return ResponseEntity.badRequest().build();
         } catch (NoUserIdException nuie){
             return ResponseEntity.notFound().build();
@@ -188,13 +183,11 @@ public class ProductsContoller {
                 productService.addDiscountByCat(categoryId, d);
                 return ResponseEntity.ok().body("El descuento se agregó correctamente al producto");
     
-            } catch (NoSuchProductException e) {
-                return ResponseEntity.notFound().build();
-    
+           
             }catch (NoSuchDiscountException nsde){
                 return ResponseEntity.badRequest().body("El descuento que quiere aplicar no existe.");
             }
-            catch (NoSuchCategoryException nsce){
+            catch (NoSuchCategoryException | NoSuchProductException e){
                 return ResponseEntity.notFound().build();
             }
      }

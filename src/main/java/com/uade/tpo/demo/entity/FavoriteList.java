@@ -1,18 +1,16 @@
 package com.uade.tpo.demo.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,9 +28,14 @@ public class FavoriteList {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "favoriteList", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<FavoriteItem> items = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+        name = "favorite_list_products", // Nombre de la tabla intermedia
+        joinColumns = @JoinColumn(name = "favorite_list_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    
+    private Set<Product> products = new HashSet<>();
 
     public FavoriteList(User user) {
         this.user = user;

@@ -1,6 +1,10 @@
 package com.uade.tpo.demo.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,21 +13,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "orders")
 @Data
 public class Order {
 
-    public Order(double totalPrice, LocalDateTime date, User user, DeliveryType delivery, PaymentMethod paymentMethod){
-        this.totalPrice = totalPrice;
-        this.date = date;
+    //primero hay que mapear todos los cartItems a orderItems, obtener el total y asignarlo a la orden.
+    public Order(Cart cart, User user, DeliveryType delivery, PaymentMethod paymentMethod){
+        this.cart = cart;
+        //this.date = date;
         this.user = user;
         this.deliveryType = delivery;
         this.paymentMethod = paymentMethod;
@@ -32,6 +37,10 @@ public class Order {
     @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY) //cuando se transforme a un modelo de datos relacional, se utiliza la estrategia para definir el valor como "autogenerado"
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
 
     @Column
     private double totalPrice;
@@ -54,5 +63,18 @@ public class Order {
     // @ManyToOne
     // @JoinColumn(name = "status_id", nullable = false)
     // private Status status;
+
+    @OneToMany(mappedBy= "order")
+    @JsonIgnore
+    private List<OrderItems> items = new ArrayList<OrderItems>(); 
+
+    public Double CalculateTotalPrice(){
+        for (OrderItems item : items){
+            totalPrice += item.getTotalPrice();
+        }
+        return totalPrice;
+    }
+
+
 
 }
