@@ -20,6 +20,7 @@ import com.uade.tpo.demo.exceptions.NoUserIdException;
 import com.uade.tpo.demo.repository.BillRepository;
 import com.uade.tpo.demo.repository.OrderRepository;
 import com.uade.tpo.demo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class BillServiceImpl implements BillService {
@@ -76,6 +77,7 @@ public class BillServiceImpl implements BillService {
 
 
 	@Override
+	@Transactional
 	public Bill createBill(Long orderId, Double precioTotal, LocalDate fecha) throws BillDuplicateException, NoBillWithOrderId {
 		if (billRepository.findByOrderId(orderId).isPresent()){ //si la factura ya existe
 			throw new BillDuplicateException();

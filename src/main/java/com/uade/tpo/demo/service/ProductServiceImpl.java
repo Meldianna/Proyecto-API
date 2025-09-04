@@ -43,7 +43,7 @@ public class ProductServiceImpl implements ProductService{
     private UserRepository userRepository;
 
     @Override
-    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+    public Page<ProductResponse> getAllProducts(Pageable pageable) { //devuelve todos: activos e inactivos
         Page<Product> productsPage = productRepository.findAll(pageable); //validación si existen productos
     
         if (productsPage.isEmpty()) {
@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductResponse getProductByName(String name) throws NoSuchProductException{
+    public ProductResponse getProductByName(String name) throws NoSuchProductException{ //devuelve todos: activos e inactivos
         Product result = productRepository.getProductByName(name);
         if (result == null)
             throw new NoSuchProductException();
@@ -63,14 +63,12 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductResponse getProductById(Long id) throws NoSuchProductException{
-        Product result = productRepository.getProductById(id);
-        if (result == null)
-            throw new NoSuchProductException();
+        Product result = this.findByActiveProducts(id); //llamamos a métod privado
         return toProductResponse(result);
     }
 
     @Override
-    public List<ProductResponse> getProductByCategory(Long productCategory) {
+    public List<ProductResponse> getProductByCategory(Long productCategory) { //devuelve todos: activos e inactivos
         return productRepository.getProductByCategory(productCategory)
         .stream()
         .map(this::toProductResponse)
@@ -85,23 +83,15 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public void deleteProduct(Long productID) throws NoSuchProductException {
-    
-        if (!productRepository.existsById(productID)) {
-            throw new NoSuchProductException();
-        }
-        productRepository.deleteById(productID); //método viene por defecto por el JPA
-
+        Product producToDelete = this.findByActiveProducts(productID); //método privado
+        producToDelete.setActive(false);
+        productRepository.save(producToDelete);
     }
 
     @Override
     @Transactional
     public void updateProductPrice(Long id, PriceUpdateRequest request) throws NoSuchProductException {
-        Product product = productRepository.getProductById(id);
-    
-        if (product == null) {
-            throw new NoSuchProductException();
-        }
-    
+        Product product = this.findByActiveProducts(id); //llamamos al método privado
         double newAmount = request.getNewAmount();
         product.setPrice(newAmount);
     }
@@ -118,15 +108,19 @@ public class ProductServiceImpl implements ProductService{
                 .orElseThrow(()  -> new NoSuchCategoryException()); 
 
                 User userRef = userRepository.findById(productRequest.getOwnerId())
-                .orElseThrow(() -> new NoUserIdException()); 
+                .orElseThrow(() -> new NoUserIdException());
 
-                Product productCreated =  productRepository.save(new Product(productRequest.getName(), 
-                productRequest.getDescription(), 
-                productRequest.getPrice(), 
-                productRequest.getStock(),
-                categoryRef, 
-                userRef));
+                Product newProduct = new Product( //creamos antes el producto para config su estado
+                    productRequest.getName(), 
+                    productRequest.getDescription(), 
+                    productRequest.getPrice(), 
+                    productRequest.getStock(),
+                    categoryRef, 
+                    userRef
+                );
 
+                newProduct.setActive(true); //config boolean to "true"
+                Product productCreated =  productRepository.save(newProduct);
                 return toProductResponse(productCreated);
     }
 
@@ -136,9 +130,7 @@ public class ProductServiceImpl implements ProductService{
         Discount existingDiscount = discountRepository.findById(d.getId())
         .orElseThrow(() ->  new NoSuchDiscountException());
         
-        Product existingProduct = productRepository.getProductById(productId);
-        if (existingProduct == null)
-            throw new NoSuchProductException();
+        Product existingProduct = this.findByActiveProducts(productId); //llamamos a método privado
 
         existingProduct.setDiscount(d);
     }
@@ -158,7 +150,11 @@ public class ProductServiceImpl implements ProductService{
         
     }
 
+    //----método de validación de producto (si es activo)----
+    private Product findByActiveProducts(Long productId) throws NoSuchProductException{
+        return productRepository.findById(productId).filter(Product::isActive).orElseThrow(() -> new NoSuchCategoryException());
 
+    }
 
    
 }

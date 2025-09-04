@@ -23,15 +23,10 @@ public interface ProductService {
     public ProductResponse getProductByName(String name) throws NoSuchProductException;
     public ProductResponse getProductById(@PathVariable Long id) throws NoSuchProductException;
     public List<ProductResponse> getProductByCategory(@PathVariable Long productCategory);
-
     public ProductResponse createProduct(ProductRequest productRequest) throws ProductDuplicateException, NoSuchCategoryException, NoUserIdException;
-
     public void deleteProduct(Long productID) throws  NoSuchProductException;
-
     public void updateProductPrice(Long id, PriceUpdateRequest request) throws NoSuchProductException;
-
     public void addDiscountById(Long id, Discount d) throws  NoSuchProductException, NoSuchDiscountException;
-
     public void addDiscountByCat(Long categoryId, Discount d) throws NoSuchCategoryException, NoSuchDiscountException;
 
 
