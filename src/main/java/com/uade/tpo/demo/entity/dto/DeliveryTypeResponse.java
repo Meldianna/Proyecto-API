@@ -5,10 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class PaymentMethodRequest {
+@NoArgsConstructor
+public class DeliveryTypeResponse {
+    private Long id;
     private String description;
-
     
 }

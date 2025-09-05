@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.demo.entity.Cart;
+import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.dto.CartItemRequest;
 import com.uade.tpo.demo.entity.dto.CartItemResponse;
 import com.uade.tpo.demo.entity.dto.CartResponse;
@@ -86,9 +87,10 @@ public class CartController {
     @PostMapping
     @Transactional
     //the cart is created right after the user created their account
-    public ResponseEntity<CartResponse> createCart(Long userId) {
-        CartResponse cart = cartService.createCart(userId);
-        return ResponseEntity.ok().body(cart); 
+    public ResponseEntity<CartResponse> createCart(User user) {
+        Cart cart = cartService.createCart(user);
+        CartResponse cartDTO = cartService.toCartResponse(cart);
+        return ResponseEntity.ok().body(cartDTO); 
 
     }
     

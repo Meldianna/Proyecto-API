@@ -26,4 +26,8 @@ public class DeliveryType {
     @Column(nullable = false, unique = true)
     private String description;
 
+    public String getDescription() {
+        return this.description;
+    }
+
 }

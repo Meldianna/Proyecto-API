@@ -49,8 +49,14 @@ public class CartServiceImpl implements CartService {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty())
             throw new NoUserIdException();
-        return cartRepository.findById(user.get().getId()).get(); //retorna la entidad Cart tras buscarlo por el usuario
+        //return cartRepository.findById(user.get().getId()).get(); //retorna la entidad Cart tras buscarlo por el usuario
         //CartResponse cart = user.get().getCartId();
+        
+        if (user.get().getCart() == null) {
+            throw new NoUserIdException();
+        }
+    
+        return user.get().getCart();
     }
 
     //here. Create a new response, and modify the name of the "request"
@@ -99,12 +105,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponse createCart(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        Cart cart = new Cart(user.get(), LocalDate.now());
-        return toCartResponse(cart);
-
-       // return cartRepository.save(cart);
+    public Cart createCart(User user) {
+        //Optional<User> user = userRepository.findById(userId);
+        Cart cart = new Cart(user, LocalDate.now());
+        return cartRepository.save(cart);
     }
 
     public CartResponse toCartResponse(Cart cart){

@@ -34,7 +34,7 @@ public class FavoriteListController {
 
     //add product in list
     @PostMapping("/{listId}/product-add")
-    public ResponseEntity<Object> addProductToList(@PathVariable Long listId, @RequestBody ProductRequest productRequest) throws ProductInListException, ResourceNotFoundException{
+    public ResponseEntity<Object> addProductToList(@PathVariable Long listId, @RequestBody ProductRequest productRequest) throws ResourceNotFoundException{
         try {
             ProductResponse productResponse = favoriteListServiceImpl.addProductToList(listId, productRequest.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);

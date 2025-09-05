@@ -42,15 +42,13 @@ public class Cart {
     private List<CartItem> cartItems = new ArrayList<CartItem>();
 
     @OneToOne
-    @JoinColumn(name ="userId", nullable= false, unique= true)
+    @JoinColumn(name ="userId", nullable=true, unique= true)
     private User user;
 
     @Column
     private LocalDate createdAt;
 
-
-    //métodos: qué hace el carrito?
-
+    //calcular su total
     public Double CalculateTotalPrice(){
         double totalPrice = 0.0;
         if (cartItems.isEmpty())
@@ -77,18 +75,6 @@ public class Cart {
         }
     }
 
-    /*for (CartItemResponse item : cart.getItems()){
-            if (item.getProduct().equals(existingProduct.getId())){
-                int q = item.getQuantity();
-                item.setQuantity(q + 1);
-                break;
-            }
-                
-    }*/
-
-
-    //eliminar del carrito
-    //vaciar
 
 
     

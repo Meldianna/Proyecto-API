@@ -2,6 +2,7 @@ package com.uade.tpo.demo.controllers;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uade.tpo.demo.entity.DeliveryType;
+import com.uade.tpo.demo.entity.dto.DeliveryTypeRequest;
+import com.uade.tpo.demo.entity.dto.DeliveryTypeResponse;
 import com.uade.tpo.demo.exceptions.DuplicateDeliveryException;
 import com.uade.tpo.demo.service.DeliveryTypeService;
 
@@ -20,19 +22,20 @@ import com.uade.tpo.demo.service.DeliveryTypeService;
 @RequestMapping("/deliveryType")
 public class DeliveryTypeController {
     
-    private final DeliveryTypeService deliveryTypeService;
-
-    public DeliveryTypeController(DeliveryTypeService deliveryTypeService) {
-        this.deliveryTypeService = deliveryTypeService;
-    }
+    @Autowired
+    private DeliveryTypeService deliveryTypeService;
 
     @PostMapping
-    public ResponseEntity<DeliveryType> createDeliveryType(@RequestBody DeliveryType deliveryType) throws DuplicateDeliveryException {
-        return ResponseEntity.ok(deliveryTypeService.createDeliveryType(deliveryType));
+    public ResponseEntity<Object> createDeliveryType(@RequestBody DeliveryTypeRequest deliveryType) {
+        try {
+            return ResponseEntity.ok(deliveryTypeService.createDeliveryType(deliveryType));
+        } catch (DuplicateDeliveryException e) {
+           return ResponseEntity.badRequest().body("delivery repetido");
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DeliveryType> updateDeliveryType(@PathVariable Long id, @RequestBody DeliveryType deliveryType) {
+    public ResponseEntity<DeliveryTypeResponse> updateDeliveryType(@PathVariable Long id, @RequestBody DeliveryTypeRequest deliveryType) {
         return ResponseEntity.ok(deliveryTypeService.updateDeliveryType(id, deliveryType));
     }
 
@@ -43,12 +46,12 @@ public class DeliveryTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DeliveryType>> getAllDeliveryTypes() {
+    public ResponseEntity<List<DeliveryTypeResponse>> getAllDeliveryTypes() {
         return ResponseEntity.ok(deliveryTypeService.getAllDeliveryTypes());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DeliveryType> getDeliveryTypeById(@PathVariable Long id) {
+    public ResponseEntity<DeliveryTypeResponse> getDeliveryTypeById(@PathVariable Long id) {
         return ResponseEntity.ok(deliveryTypeService.getDeliveryTypeById(id));
     }
 

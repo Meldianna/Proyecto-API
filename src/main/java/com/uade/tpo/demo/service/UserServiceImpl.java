@@ -1,5 +1,6 @@
 package com.uade.tpo.demo.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,14 +10,17 @@ import org.springframework.stereotype.Service;
 
 import com.uade.tpo.demo.entity.Cart;
 import com.uade.tpo.demo.entity.FavoriteList;
+import com.uade.tpo.demo.entity.Role;
 import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.dto.UserCreateDTO;
 import com.uade.tpo.demo.entity.dto.UserResponse;
+import com.uade.tpo.demo.exceptions.DuplicateUserException;
 import com.uade.tpo.demo.exceptions.NoUserIdException;
 import com.uade.tpo.demo.repository.CartRepository;
-import com.uade.tpo.demo.repository.UserRepository;
 import com.uade.tpo.demo.repository.FavoriteListRepository;
-import com.uade.tpo.demo.service.UserService;
+import com.uade.tpo.demo.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -28,7 +32,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private FavoriteListRepository favoriteListRepository;
 
+    @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private CartServiceImpl cartService;
+
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -49,10 +58,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserCreateDTO userCreateDTO) {
-        User user = toEntity(userCreateDTO);
-        user.setActive(true); //creado activo el usuario;
+    @Transactional
+    public UserResponse createUser(UserCreateDTO userCreateDTO) throws DuplicateUserException{
+
+        //validación para no crear dos usuarios con mismo mail (iguales)
+        String requestEmail = userCreateDTO.getEmail();
+
+        User user = this.toEntity(userCreateDTO);
+        
+        user.setActive(true); 
+        user.setRole(Role.USER);//creado activo el usuario;
         user = userRepository.save(user);
+        //validación temporal
+        if (Role.USER.equals(user.getRole())){
+            Cart userCart = cartService.createCart(user);
+            userCart = cartRepository.save(userCart);
+            user.setCart(userCart);
+            user = userRepository.save(user);
+        }
+        
         return toUserResponse(user);
     }
 
@@ -87,12 +111,18 @@ public class UserServiceImpl implements UserService {
 
     // --- Métodos privados de conversión ---
     private UserResponse toUserResponse(User user) {
+        Long cartId = null;
+        //si el usuario es ADMIN, tiene cart null.
+        //
+        if (user.getCart() != null)
+            cartId = user.getCart().getId();
+
         return new UserResponse(
             user.getEmail(),
             user.getName(),
             user.getSurname(),
             user.getPhone_number(),
-            user.getCart().getId()
+            cartId
         );
     }
 
@@ -103,7 +133,7 @@ public class UserServiceImpl implements UserService {
         user.setSurname(dto.getSurname());
         user.setPassword(dto.getPassword());
         user.setPhone_number(dto.getPhoneNumber());
-        user.setDate(dto.getDate());
+        user.setDate(LocalDateTime.now());
         return user;
     }
 
@@ -113,6 +143,6 @@ public class UserServiceImpl implements UserService {
         user.setSurname(dto.getSurname());
         user.setPassword(dto.getPassword());
         user.setPhone_number(dto.getPhoneNumber());
-        user.setDate(dto.getDate());
+        //user.setDate(dto.getDate());
     }
 }
