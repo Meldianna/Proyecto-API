@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,14 +71,15 @@ public class CartController {
 
     }
     
-    @PutMapping("/addItem/{useId}/")
-    public ResponseEntity<Object> addToCart(@PathVariable Long userId, CartItemRequest cartItem) {
+    @PutMapping("/addItem/{userId}")
+    public ResponseEntity<Object> addToCart(@PathVariable Long userId, @RequestBody CartItemRequest cartItem) {
+        
         cartService.addItem(userId, cartItem);
         return ResponseEntity.ok().body("Se añadió el producto al carrito!");
         //add exceptions
     }
 
-    @PutMapping("removeItem/{userId}/{itemId}") 
+    @PutMapping("/removeItem/{userId}/{itemId}") 
     public ResponseEntity<Object> removeFromCart(@PathVariable Long userId, @PathVariable Long itemId) {
         cartService.removeItem(userId, itemId);
         return ResponseEntity.ok().body("Se añadió el producto al carrito!");

@@ -18,6 +18,7 @@ import com.uade.tpo.demo.entity.dto.CartResponse;
 import com.uade.tpo.demo.exceptions.NoCartForThatUserException;
 import com.uade.tpo.demo.exceptions.NoSuchProductException;
 import com.uade.tpo.demo.exceptions.NoUserIdException;
+import com.uade.tpo.demo.repository.CartItemRepository;
 import com.uade.tpo.demo.repository.CartRepository;
 import com.uade.tpo.demo.repository.ProductRepository;
 import com.uade.tpo.demo.repository.UserRepository;
@@ -37,6 +38,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     @Override
     public List<CartItemResponse> getAllCartItems(Long userId) throws NoUserIdException{
@@ -70,12 +74,16 @@ public class CartServiceImpl implements CartService {
             throw new NoSuchProductException();
 
         //validación que exista un carrito con el usuario
-        Optional<Cart> cart = cartRepository.findById(userId);
+        Optional<Cart> cart = cartRepository.findByUserId(userId);
         if (cart.isEmpty())
             throw new NoCartForThatUserException();
 
         //añadir al carrito
-        cart.get().addItem(existingProduct, cartItem.getQuantity());
+        cart.get().add(existingProduct, cartItem.getQuantity());
+        //cartRepository.save(cart.get());
+
+        //guardar el carrito
+        saveCartWithItems(cart.get());
         
     }
 
@@ -132,6 +140,15 @@ public class CartServiceImpl implements CartService {
         return dtoList;
     }
 
+    public void saveCartWithItems(Cart cart){
+        //persistir los items
+        for (CartItem item : cart.getCartItems()){
+            cartItemRepository.save(item);
+        }
+
+        //guardar el carrito con los items guardados
+        cartRepository.save(cart);
+    }
 
     
 

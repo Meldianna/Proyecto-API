@@ -48,14 +48,14 @@ import com.uade.tpo.demo.service.UserService;
         }
 
         // Actualizar usuario
-        @PutMapping("/{id}")
+        @PutMapping("/update/{id}")
         public UserResponse updateUser(@PathVariable Long id,
                                     @RequestBody @Valid UserCreateDTO userCreateDTO) {
             return userService.updateUser(id, userCreateDTO);
         }
 
         // Eliminar usuario
-        @DeleteMapping("/{id}")
+        @DeleteMapping("/delete/{id}")
         public void deleteUser(@PathVariable Long id) throws NoUserIdException{
             userService.deleteUser(id);
         }

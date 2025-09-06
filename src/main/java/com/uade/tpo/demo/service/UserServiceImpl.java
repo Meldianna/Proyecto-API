@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
         //validación temporal
         if (Role.USER.equals(user.getRole())){
             Cart userCart = cartService.createCart(user);
-            userCart = cartRepository.save(userCart);
+            //userCart = cartRepository.save(userCart);
             user.setCart(userCart);
             user = userRepository.save(user);
         }

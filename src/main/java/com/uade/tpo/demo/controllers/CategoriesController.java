@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.demo.entity.Category;
-import com.uade.tpo.demo.entity.dto.CategoryResponse;
 import com.uade.tpo.demo.entity.dto.CategoryRequest;
+import com.uade.tpo.demo.entity.dto.CategoryResponse;
 import com.uade.tpo.demo.exceptions.CategoryDuplicateException;
 import com.uade.tpo.demo.service.CategoryService;
 
@@ -29,14 +29,7 @@ public class CategoriesController {
     @Autowired //se delega a un tercero (spring) que cuando llegue una request al controller, se inyecte una dependencia. En este caso
     private CategoryService categoryService;
 
-    
-    /*@GetMapping
-    public ResponseEntity<List<Category>> getCategories() {
-        return ResponseEntity.ok(categoryService.getCategories());
-    }
-*/
-    
-    
+        
     @GetMapping
     public ResponseEntity<Page<Category>> getCategories(
             @RequestParam(required = false) Integer page,

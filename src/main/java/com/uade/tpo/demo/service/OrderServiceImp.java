@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.uade.tpo.demo.entity.Cart;
 import com.uade.tpo.demo.entity.CartItem;
@@ -19,17 +16,17 @@ import com.uade.tpo.demo.entity.OrderItems;
 import com.uade.tpo.demo.entity.PaymentMethod;
 import com.uade.tpo.demo.entity.User;
 import com.uade.tpo.demo.entity.dto.OrderItemsResponse;
-import com.uade.tpo.demo.entity.dto.OrderItemsResponse;
 import com.uade.tpo.demo.entity.dto.OrderRequest;
 import com.uade.tpo.demo.entity.dto.OrderResponse;
 import com.uade.tpo.demo.exceptions.NoSuchDeliveryTypeException;
 import com.uade.tpo.demo.exceptions.NoSuchPaymentMethodException;
 import com.uade.tpo.demo.exceptions.NoUserIdException;
 import com.uade.tpo.demo.exceptions.OrderDuplicateException;
-import com.uade.tpo.demo.repository.OrderRepository;
-import com.uade.tpo.demo.repository.PaymentMethodRepository;
 import com.uade.tpo.demo.repository.CartRepository;
 import com.uade.tpo.demo.repository.DeliveryTypeRepository;
+import com.uade.tpo.demo.repository.OrderItemsRepository;
+import com.uade.tpo.demo.repository.OrderRepository;
+import com.uade.tpo.demo.repository.PaymentMethodRepository;
 import com.uade.tpo.demo.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -53,6 +50,9 @@ public class OrderServiceImp implements OrderService {
     @Autowired
     private PaymentMethodRepository paymentRepository;
 
+    @Autowired
+    private OrderItemsRepository orderItemsRepository;
+
 
     //page
     //cambiar a Order DTO
@@ -60,9 +60,7 @@ public class OrderServiceImp implements OrderService {
     public List<Order> getOrders() {
         return  orderRepository.findAll();
     }
-
-
-
+    
     @Override
     public Optional<Order> getOrderById(Long orderId) {
         return orderRepository.findById(orderId);
@@ -105,7 +103,7 @@ public class OrderServiceImp implements OrderService {
      NoSuchDeliveryTypeException,  NoSuchPaymentMethodException{
     
 
-        // Crear orden
+        // Crear orden vacía
         Order order = createOrder(orderRequest);
 
         // // Pasar CartItems a OrderItems 
@@ -113,8 +111,11 @@ public class OrderServiceImp implements OrderService {
         List<CartItem> cartItemList = cart.getCartItems();
         
         List<OrderItems> orderItems = CartItemsToOrderItems(cartItemList, order);
+        //persistir los orderItems
+
+
         order.setItems(orderItems);
-       
+        saveOrderWithItems(order);
 
     
         // Calcular total de la orden
@@ -186,13 +187,24 @@ public class OrderServiceImp implements OrderService {
     }
         
 
-
+        @Transactional
         public void calculateTotalPrice(Order order) {
             double total = 0;
             for (OrderItems item : order.getItems()) {
                 total += item.getTotalPrice();
             }
             order.setTotalPrice(total);
+        }
+
+        @Transactional
+        public void saveOrderWithItems(Order order){
+            //persistir los items
+            for (OrderItems item : order.getItems()){
+                orderItemsRepository.save(item);
+            }
+    
+            //guardar la orden con los items guardados
+            orderRepository.save(order);
         }
 
 }

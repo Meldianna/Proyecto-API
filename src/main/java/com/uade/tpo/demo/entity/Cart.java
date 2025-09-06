@@ -42,7 +42,7 @@ public class Cart {
     private List<CartItem> cartItems = new ArrayList<CartItem>();
 
     @OneToOne
-    @JoinColumn(name ="userId", nullable=true, unique= true)
+    @JoinColumn(name ="user_id", nullable=true, unique= true)
     private User user;
 
     @Column
@@ -61,7 +61,7 @@ public class Cart {
     }
 
     //añadir al carrito
-    public void addItem(Product product, int quantity) {
+    public void add(Product product, int quantity) {
         // Lógica INTERNA: ¿cómo manejo mis items?
         Optional<CartItem> existingItem = cartItems.stream()
             .filter(item -> item.getProduct().getId().equals(product.getId()))

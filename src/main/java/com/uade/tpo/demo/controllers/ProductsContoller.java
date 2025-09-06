@@ -105,19 +105,6 @@ public class ProductsContoller {
             return ResponseEntity.badRequest().body("No existen productos bajo la categoría que buscas."); //instancia un objeto con BodyBuilder con código 204
      }
      
-     //buscar por id
-     @GetMapping("/{productId}") //o /search
-     public ResponseEntity<Object> getProductById(@PathVariable Long productId){
-
-            ProductResponse result = productService.getProductById(productId);
-            if (result == null)
-                ResponseEntity.badRequest().body("No existen productos con ese identificador.");
-       
-            return ResponseEntity.ok(result); //retorna una respuesta con código 200
-    }
-        
-     
-
      @PostMapping("/create")
      public ResponseEntity<Object> createProduct(@RequestBody ProductRequest productRequest) {
         try {
@@ -133,6 +120,20 @@ public class ProductsContoller {
         
      }
 
+     //buscar por id
+     @GetMapping("/{productId}") //o /search
+     public ResponseEntity<Object> getProductById(@PathVariable Long productId){
+
+            ProductResponse result = productService.getProductById(productId);
+            if (result == null)
+                ResponseEntity.badRequest().body("No existen productos con ese identificador.");
+       
+            return ResponseEntity.ok(result); //retorna una respuesta con código 200
+    }
+        
+     
+
+   
 
      @DeleteMapping("/delete/{productId}")
      public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
