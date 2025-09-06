@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.uade.tpo.demo.entity.Product;
 
@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
     public Product getProductById(Long id);
 
     @Query(value="select p from Product p where p.category = :productCategory")
-    public List<Product> getProductByCategory(@RequestParam("productCategory") Long id);
+    public List<Product> getProductByCategory(@Param("productCategory") Long productCategory);
 
 
     

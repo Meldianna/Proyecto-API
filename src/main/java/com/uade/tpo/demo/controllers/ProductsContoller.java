@@ -130,7 +130,7 @@ public class ProductsContoller {
              
             return ResponseEntity.created(URI.create("/products/" + result.getId())).body(result);
 
-        } catch (ProductDuplicateException | NoSuchCategoryException pde) {
+        } catch (ProductDuplicateException | NoSuchCategoryException e) {
             return ResponseEntity.badRequest().build();
         } catch (NoUserIdException nuie){
             return ResponseEntity.notFound().build();
@@ -188,13 +188,11 @@ public class ProductsContoller {
                 productService.addDiscountByCat(categoryId, d);
                 return ResponseEntity.ok().body("El descuento se agregó correctamente al producto");
     
-            } catch (NoSuchProductException e) {
-                return ResponseEntity.notFound().build();
-    
+           
             }catch (NoSuchDiscountException nsde){
                 return ResponseEntity.badRequest().body("El descuento que quiere aplicar no existe.");
             }
-            catch (NoSuchCategoryException nsce){
+            catch (NoSuchCategoryException | NoSuchProductException e){
                 return ResponseEntity.notFound().build();
             }
      }

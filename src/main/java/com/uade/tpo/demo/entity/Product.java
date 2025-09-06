@@ -1,11 +1,15 @@
 package com.uade.tpo.demo.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -59,5 +63,23 @@ public class Product {
     @JoinColumn(name="user_id", referencedColumnName="id")
     private User owner;
 
-    
+    @ManyToMany(mappedBy = "products") // "products" es el nombre del campo en FavoriteList
+    private Set<FavoriteList> favoriteLists = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        // Se asegura de que o no sea nulo y que sea una instancia de Product
+        if (!(o instanceof Product)) return false;
+        Product product = (Product) o;
+        // Dos productos son iguales si y solo si sus IDs no son nulos y son iguales.
+        return id != null && id.equals(product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        // Usar getClass().hashCode() es una estrategia segura para entidades.
+        // Asegura que el hashCode no cambie una vez que se le asigna un ID a la entidad.
+        return getClass().hashCode();
+    }
 }
