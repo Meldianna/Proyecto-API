@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import com.uade.tpo.demo.entity.Category;
 import com.uade.tpo.demo.entity.dto.CategoryResponse;
 import com.uade.tpo.demo.exceptions.CategoryDuplicateException;
+import com.uade.tpo.demo.exceptions.NoSuchCategoryException;
 import com.uade.tpo.demo.repository.CategoryRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -34,5 +37,16 @@ public class CategoryServiceImpl implements CategoryService{
         return categoryRepository.save(new Category(description));
     throw new CategoryDuplicateException();
    }
+
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+
+        if (!categoryRepository.existsById(id)) {
+            throw new NoSuchCategoryException();
+        }
+        categoryRepository.deleteById(id);
+    }
     
 }

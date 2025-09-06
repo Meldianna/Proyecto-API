@@ -4,12 +4,6 @@ package com.uade.tpo.demo.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.uade.tpo.demo.entity.Cart;
 import com.uade.tpo.demo.entity.Order;
 import com.uade.tpo.demo.entity.dto.OrderRequest;
 import com.uade.tpo.demo.entity.dto.OrderResponse;
@@ -31,3 +25,4 @@ public interface OrderService {
     public OrderResponse checkout(OrderRequest orderRequest) throws OrderDuplicateException, NoUserIdException,
      NoSuchDeliveryTypeException,  NoSuchPaymentMethodException;
 }
+

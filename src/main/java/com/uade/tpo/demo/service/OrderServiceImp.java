@@ -123,13 +123,13 @@ public class OrderServiceImp implements OrderService {
         calculateTotalPrice(order);
 
         // Guardar la orden 
-        Order savedOrder = orderRepository.save(order);
+        //Order savedOrder = orderRepository.save(order);
 
         // Vaciar carrito
         cart.getCartItems().clear();
         cartRepository.save(cart);
 
-        return toOrderResponse(savedOrder);
+        return toOrderResponse(order);
     }
 
 
@@ -145,10 +145,9 @@ public class OrderServiceImp implements OrderService {
             toOrderItemResponse(order.getItems())
     );
     }
-    
 
-    
-
+   
+    @Transactional
      private List<OrderItems> CartItemsToOrderItems(List<CartItem> cartItems, Order order) {
         List<OrderItems> orderItems = new ArrayList<>();
 
@@ -167,7 +166,8 @@ public class OrderServiceImp implements OrderService {
     }
     
 
-    
+
+    @Transactional
     public List<OrderItemsResponse> toOrderItemResponse(List<OrderItems> items){
         List<OrderItemsResponse> listOrderItems = new ArrayList<>();  
 

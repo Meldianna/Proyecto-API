@@ -52,6 +52,7 @@ public class User {
     private Boolean active;
 
     @OneToMany(mappedBy= "user") //cardinalidad. User es la FK para la relación
+    @JsonIgnore
     private List<Order> orders;
    
     @Enumerated(EnumType.STRING)
