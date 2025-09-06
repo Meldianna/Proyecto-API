@@ -1,7 +1,5 @@
 package com.uade.tpo.demo.entity.dto;
 
-import java.time.LocalDateTime;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,7 +31,7 @@ public class UserCreateDTO {
     private Long phoneNumber;
 
     //@NotNull(message = "La fecha es obligatoria")
-    private LocalDateTime date;
+    //private LocalDateTime date;
     //esto puede agregarse por cuenta nuestra
 }
 

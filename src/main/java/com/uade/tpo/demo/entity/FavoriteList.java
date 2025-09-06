@@ -34,6 +34,7 @@ public class FavoriteList {
         joinColumns = @JoinColumn(name = "favorite_list_id"),
         inverseJoinColumns = @JoinColumn(name = "product_id")
     )
+    
     private Set<Product> products = new HashSet<>();
 
     public FavoriteList(User user) {

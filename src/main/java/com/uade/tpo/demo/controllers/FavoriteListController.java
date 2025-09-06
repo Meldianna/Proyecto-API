@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.demo.entity.FavoriteList;
-import com.uade.tpo.demo.entity.dto.ProductRequest;
+import com.uade.tpo.demo.entity.dto.AddToListRequest;
 import com.uade.tpo.demo.entity.dto.ProductResponse;
 import com.uade.tpo.demo.exceptions.ProductInListException;
 import com.uade.tpo.demo.exceptions.ResourceNotFoundException;
@@ -34,7 +34,9 @@ public class FavoriteListController {
 
     //add product in list
     @PostMapping("/{listId}/product-add")
-    public ResponseEntity<Object> addProductToList(@PathVariable Long listId, @RequestBody ProductRequest productRequest) throws ProductInListException, ResourceNotFoundException{
+
+    public ResponseEntity<Object> addProductToList(@PathVariable Long listId, @RequestBody AddToListRequest productRequest) throws ResourceNotFoundException{
+
         try {
             ProductResponse productResponse = favoriteListServiceImpl.addProductToList(listId, productRequest.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);

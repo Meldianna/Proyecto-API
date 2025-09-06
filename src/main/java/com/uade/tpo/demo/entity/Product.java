@@ -29,13 +29,13 @@ public class Product {
         this.category = cat;
         this.discount = null; //inicializa en null
         this.owner = owner;
-    }
+    } 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true) //nombre único
+    @Column(unique=true) //nombre único para poder luego buscar por nombre
     private String name;
 
     @Column
@@ -46,6 +46,9 @@ public class Product {
 
     @Column
     private int stock;
+
+    @Column
+    private boolean active; //no se agrega en constructor: la lógica se maneja en el servicio
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
@@ -66,20 +69,23 @@ public class Product {
     @ManyToMany(mappedBy = "products") // "products" es el nombre del campo en FavoriteList
     private Set<FavoriteList> favoriteLists = new HashSet<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        // Se asegura de que o no sea nulo y que sea una instancia de Product
-        if (!(o instanceof Product)) return false;
-        Product product = (Product) o;
-        // Dos productos son iguales si y solo si sus IDs no son nulos y son iguales.
-        return id != null && id.equals(product.id);
-    }
 
-    @Override
-    public int hashCode() {
-        // Usar getClass().hashCode() es una estrategia segura para entidades.
-        // Asegura que el hashCode no cambie una vez que se le asigna un ID a la entidad.
-        return getClass().hashCode();
-    }
+    // @Override
+    // public boolean equals(Object o) {
+    //     if (this == o) return true;
+    //     // Se asegura de que o no sea nulo y que sea una instancia de Product
+    //     if (!(o instanceof Product)) return false;
+    //     Product product = (Product) o;
+    //     // Dos productos son iguales si y solo si sus IDs no son nulos y son iguales.
+    //     return id != null && id.equals(product.id);
+    // }
+
+    // @Override
+    // public int hashCode() {
+    //     // Usar getClass().hashCode() es una estrategia segura para entidades.
+    //     // Asegura que el hashCode no cambie una vez que se le asigna un ID a la entidad.
+    //     return getClass().hashCode();
+    // }
+    
+    
 }
